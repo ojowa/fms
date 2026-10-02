@@ -1,0 +1,22 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./farm-client/admin/packages/api-client" },
+    { "path": "./farm-client/admin/packages/auth" },
+    { "path": "./farm-client/admin/packages/types" },
+    { "path": "./farm-client/admin/packages/ui" },
+    { "path": "./farm-client/admin/packages/validation" },
+    { "path": "./farm-client/console/packages/api-client" },
+    { "path": "./farm-client/console/packages/auth" },
+    { "path": "./farm-client/console/packages/types" },
+    { "path": "./farm-client/console/packages/ui" },
+    { "path": "./farm-client/mobile/packages/ui-native" },
+    { "path": "./farm-server/packages/server/auth" },
+    { "path": "./farm-server/packages/server/database" },
+    { "path": "./farm-server/packages/server/domain-core" },
+    { "path": "./farm-server/packages/server/env" },
+    { "path": "./farm-server/packages/server/types" },
+    { "path": "./farm-server/packages/server/utils" },
+    { "path": "./farm-server/packages/server/validation" }
+  ]
+}

@@ -1,0 +1,37 @@
+import { Controller, Get } from '@nestjs/common';
+import { RoutingService } from './routing.service';
+
+@Controller('health')
+export class HealthController {
+  constructor(private readonly routingService: RoutingService) {}
+
+  @Get()
+  health() {
+    return {
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+      service: 'app-server',
+    };
+  }
+
+  @Get('ready')
+  ready() {
+    return {
+      status: 'ready',
+      timestamp: new Date().toISOString(),
+      routes: this.routingService.getAllRoutes().length,
+    };
+  }
+
+  @Get('live')
+  live() {
+    return { status: 'alive' };
+  }
+
+  @Get('routes')
+  getRoutes() {
+    return {
+      routes: this.routingService.getAllRoutes(),
+    };
+  }
+}

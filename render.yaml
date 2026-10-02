@@ -1,0 +1,111 @@
+# Render Blueprint — Farm Management System
+#
+# Provisions three web services:
+#   fms-api    — NestJS gateway + microservices (farm-server)
+#   fms-admin  — Next.js admin dashboard  (farm-client/admin)
+#   fms-console— Next.js platform console (farm-client/console)
+#
+# Database is NOT provisioned here — use Neon (free tier) and paste the
+# connection string into DATABASE_URL (sync: false) in the Render dashboard.
+#
+# Deploy: Render Dashboard → New → Blueprint → point at this repo.
+# After the first deploy, verify the auto-generated *.onrender.com domains
+# and update CORS_ORIGINS / NEXT_PUBLIC_* below if they differ.
+
+services:
+  - type: web
+    name: fms-api
+    runtime: node
+    plan: free
+    # Working directory is farm-server; the repo root is still checked out, so
+    # app-server/tsconfig.json (../../) and packages/server/*/tsconfig.json
+    # (../../../../) reach the shared tsconfig.base.json at the repo root.
+    rootDir: farm-server
+    buildCommand: npm ci && npm run build
+    startCommand: node scripts/start-prod.js
+    preDeployCommand: npm run migrate
+    healthCheckPath: /v1/health
+    envVars:
+      # Node 20 - the backend targets NestJS 11, which requires >= 20.
+      - key: NODE_VERSION
+        value: "20"
+      # Merged-process mode: all domain services run in one container (port 4099),
+      # the gateway (PORT) proxies to them via these URLs. Keeps free tier = 1 instance.
+      - key: DOMAINS_SERVICE_PORT
+        value: "4099"
+      - key: AUTH_SERVICE_URL
+        value: http://localhost:4099
+      - key: FARM_SERVICE_URL
+        value: http://localhost:4099
+      - key: CROP_SERVICE_URL
+        value: http://localhost:4099
+      - key: LIVESTOCK_SERVICE_URL
+        value: http://localhost:4099
+      - key: POULTRY_SERVICE_URL
+        value: http://localhost:4099
+      - key: FINANCE_SERVICE_URL
+        value: http://localhost:4099
+      - key: HR_SERVICE_URL
+        value: http://localhost:4099
+      - key: NOTIFICATION_SERVICE_URL
+        value: http://localhost:4099
+      - key: ORGANIZATION_SERVICE_URL
+        value: http://localhost:4099
+      - key: PLATFORM_SERVICE_URL
+        value: http://localhost:4099
+      - key: REPORTING_SERVICE_URL
+        value: http://localhost:4099
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false # Neon Postgres connection string (sslmode=require)
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: MFA_SECRET
+        generateValue: true
+      - key: SERVICE_SECRET
+        generateValue: true
+      - key: CORS_ORIGINS
+        value: https://farm-management-system-lake.vercel.app,https://farm-management-system-three-navy.vercel.app
+      - key: COOKIE_SAMESITE
+        value: none
+      - key: ADMIN_URL
+        value: https://farm-management-system-lake.vercel.app
+      - key: CONSOLE_URL
+        value: https://farm-management-system-three-navy.vercel.app/login
+      - key: MOBILE_URL
+        value: https://fms-mobile-3an1wd.vercel.app
+
+  - type: web
+    name: fms-admin
+    runtime: node
+    plan: free
+    rootDir: farm-client/admin
+    buildFilter:
+      paths:
+        - farm-client/admin/**
+        - tsconfig.base.json
+    buildCommand: npm ci && npm run build
+    startCommand: npx next start -p $PORT
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        value: https://fms-api.onrender.com/v1
+      - key: NEXT_PUBLIC_SOCKET_URL
+        value: https://fms-api.onrender.com
+
+  - type: web
+    name: fms-console
+    runtime: node
+    plan: free
+    rootDir: farm-client/console
+    buildFilter:
+      paths:
+        - farm-client/console/**
+        - tsconfig.base.json
+    buildCommand: npm ci && npm run build
+    startCommand: npx next start -p $PORT
+    envVars:
+      - key: API_GATEWAY_URL
+        value: https://fms-api.onrender.com/v1

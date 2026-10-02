@@ -1,0 +1,69 @@
+# Dependencies
+node_modules/
+jspm_packages/
+web_modules/
+
+# Build outputs
+dist/
+build/
+.next/
+.turbo/
+out/
+bin/
+obj/
+coverage/
+*.tsbuildinfo
+
+# Stray compiled JS in source directories (tsc accidentally writing to src/)
+**/packages/*/src/**/*.js
+**/packages/*/src/**/*.d.ts
+**/packages/*/src/**/*.d.ts.map
+
+# Environment variables and secrets
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env*.local
+*.pem
+*.key
+*.cert
+
+# Firebase / Google services (contain API keys and service account credentials)
+google-services.json
+GoogleService-Info.plist
+firebase-debug.log
+firebase-debug.*.log
+
+# Logs and databases
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+*.err
+*.sqlite
+
+# Test outputs
+test-output.json
+
+# Editor directories and files
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.tmp
+*.bak
+
+# OS files
+.DS_Store
+Thumbs.db
+.aider*
+.claude
+
+# Files
+agent.md
+DDD_REFACTORING_PLAN.md
